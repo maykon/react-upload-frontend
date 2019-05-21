@@ -24,6 +24,10 @@ export default function useUploadFiles() {
       dispatch({ type: "add", payload: fileUploads });
     }
     loadFiles();
+
+    return () => {
+      uploadedFiles.forEach(file => URL.revokeObjectURL(file.preview));
+    };
   }, []);
 
   const OnHandleUpload = files => {
