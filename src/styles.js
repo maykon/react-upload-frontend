@@ -27,3 +27,12 @@ export const UploadSearch = styled.input.attrs({
   margin-top: 7px;
   padding: 2px;
 `;
+
+export const TotalMemes = styled.p`
+  margin-top: 5px;
+  text-align: right;
+
+  span {
+    font-weight: bold;
+  }
+`;
