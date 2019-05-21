@@ -98,12 +98,22 @@ export default function useUploadFiles() {
     setSearch(e.target.value);
   };
 
+  const OnNameChange = async (id, name) => {
+    let newName = prompt("Informe o novo nome: ", name);
+    if (!newName.length) return;
+
+    const payload = { name: newName };
+    await api.put(`/posts/${id}`, payload);
+    dispatch({ type: "update", id, payload });
+  };
+
   return {
     uploadedFiles,
     filteredFiles,
     search,
     OnHandleUpload,
     OnHandleDelete,
-    OnHandleFilter
+    OnHandleFilter,
+    OnNameChange
   };
 }
