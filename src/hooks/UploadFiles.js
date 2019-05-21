@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer } from "react";
 
 import fileReducer from "../reducers/File";
 import { uniqueId } from "lodash";
@@ -7,6 +7,8 @@ import api from "../services/api";
 
 export default function useUploadFiles() {
   const [uploadedFiles, dispatch] = useReducer(fileReducer, []);
+  const [filteredFiles, setFilteredFiles] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     async function loadFiles() {
@@ -26,9 +28,23 @@ export default function useUploadFiles() {
     loadFiles();
 
     return () => {
-      uploadedFiles.forEach(file => URL.revokeObjectURL(file.preview));
+      dispatch({ type: "revokeURL" });
     };
   }, []);
+
+  useEffect(() => {
+    setFilteredFiles(uploadedFiles);
+  }, [uploadedFiles]);
+
+  useEffect(() => {
+    if (search === "") {
+      setFilteredFiles(uploadedFiles);
+      return;
+    }
+
+    const re = new RegExp(search, "i");
+    setFilteredFiles(uploadedFiles.filter(file => file.name.match(re)));
+  }, [search, uploadedFiles]);
 
   const OnHandleUpload = files => {
     const upFiles = files.map(file => ({
@@ -78,5 +94,16 @@ export default function useUploadFiles() {
     dispatch({ type: "delete", id });
   };
 
-  return [uploadedFiles, OnHandleUpload, OnHandleDelete];
+  const OnHandleFilter = e => {
+    setSearch(e.target.value);
+  };
+
+  return {
+    uploadedFiles,
+    filteredFiles,
+    search,
+    OnHandleUpload,
+    OnHandleDelete,
+    OnHandleFilter
+  };
 }

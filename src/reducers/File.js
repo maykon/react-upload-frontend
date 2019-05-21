@@ -8,6 +8,8 @@ export default function fileReducer(state, action) {
       });
     case "delete":
       return state.filter(file => file.id !== action.id);
+    case "revokeURL":
+      return state.forEach(file => URL.revokeObjectURL(file.preview));
     default:
       return state;
   }
